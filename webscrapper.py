@@ -6,13 +6,15 @@ driver = webdriver.Chrome("C:\\Users\\Marcelo\\Desktop\\Data\\Chromedriver\\chro
 
 url = "https://pt2.lamentosa.com/vampires-vs-werewolves-mmorpg-game/"
 
+
+#inputs
 email = input("Digite seu email\n")
 senha = input("Digite sua senha\n")
 nickname = input("Digite seu Nick\n")
 print(" ")
 
 
-
+#login
 def site_login(url):
     global email
     global senha
@@ -21,12 +23,11 @@ def site_login(url):
     driver.find_element_by_id ("id_password").send_keys(senha)
     driver.find_element_by_xpath("//div/div[2]/form/div/button").click()
     
-    
-site_login(url)
+
 
     
 
-#sheet
+#sheet header
 wb = Workbook()
 
 sheet = wb.add_sheet('Dados')
@@ -53,6 +54,7 @@ row_A = 1
 row_E = 1
 
 
+#change page
 def get_page(pn):
     try:
         data_url = "https://pt2.lamentosa.com/messages/list/attack/sender/"
@@ -76,7 +78,9 @@ def combat_info():
     global row_A
     global row_E
     global nickname
+    
     #Attributes Ally
+    
     forç = driver.find_element_by_xpath("/html/body/section[1]/div/div[2]/div[2]/ul[1]/li[2]/div/span[2]").text
 
     defe = driver.find_element_by_xpath("/html/body/section[1]/div/div[2]/div[2]/ul[1]/li[3]/div/span[2]").text
@@ -104,15 +108,14 @@ def combat_info():
 
     level_E = driver.find_element_by_xpath("/html/body/section[1]/div/div[2]/div[5]/div/div[1]/span[2]").text
 
-
+    #nickname
     your_name = driver.find_element_by_xpath("/html/body/section[1]/div/div[2]/div[2]/div/div[2]").text
     enemy_name = driver.find_element_by_xpath("/html/body/section[1]/div/div[2]/div[5]/div/div[2]").text
 
     rows = "/html/body/section[2]/div/table/tbody/tr[{}]/td"
     
+    
     try:
-        
-
         for row in range (1,50):
             r_text = driver.find_element_by_xpath(rows.format(row)).text
             
@@ -120,8 +123,8 @@ def combat_info():
                 r_text = r_text.replace(enemy_name,"")
                 r_text = r_text.replace(your_name,"")
                 damage = ''.join(x for x in r_text if x.isdigit())
+                
                 if damage != "":
-                    
                     sheet.write(row_A,1,damage)
                     sheet.write(row_A,2,forç)
                     sheet.write(row_A,3,defe)
@@ -134,8 +137,8 @@ def combat_info():
                 r_text = r_text.replace(enemy_name,"")
                 r_text = r_text.replace(your_name,"")
                 damage_e = ''.join(x for x in r_text if x.isdigit())
-                if damage_e != "":
                 
+                if damage_e != "":
                     sheet.write(row_E,9,damage_e)
                     sheet.write(row_E,10,forç_E)
                     sheet.write(row_E,11,defe_E)
@@ -150,12 +153,19 @@ def combat_info():
         None
     wb.save('Dados.xls')  
     
-def run():
-    for i in range (1,500):
+    
+#start
+def run():   
+    site_login(url)
+    for i in range (1,3):
         get_page(i)
         combat_info()
     driver.close()
     os._exit(0)
+    
+    
+    
+    
 run()
     
       
